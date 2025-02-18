@@ -1,4 +1,4 @@
-# 🚀 **End-to-End ETL Data Pipeline with API, Python & AWS**
+# 🚀 **Building an End-to-End Data Pipeline on AWS with Python and API Integration**
 
 ## 🛠️ **Project Overview**
 
