@@ -1,8 +1,24 @@
 # 🚀 **Building an End-to-End Data Pipeline on AWS with Python and API Integration**
 
-## 🛠️ **Project Overview**
+## 📖 **Project Overview**
+This project demonstrates how to build an **automated ETL (Extract, Transform, Load) pipeline** leveraging **Python, Kaggle API** and **AWS services**. The pipeline automates the entire workflow from data collection to data availability for analytics.
 
-I developed a fully automated **ETL (Extract, Transform, Load) data pipeline** using **Python, Kaggle API and AWS services**. This project demonstrates the process of gathering, transforming and analyzing Spotify data, illustrating how cloud-based infrastructure can streamline data workflows. The pipeline follows industry best practices to manage datasets, perform transformations and provide data for business intelligence to generate insights.
+Key aspects covered include:
+- Automating dataset retrieval with **Kaggle API**.
+- Processing and transforming data using **Python**.
+- Cloud storage with **Amazon S3**.
+- Running ETL jobs via **AWS Glue**.
+- Querying the processed data using **Amazon Athena**.
+- Preparing data for potential BI insights via **Amazon QuickSight**.
+
+---
+
+## 🔍 **Why This Pipeline?**
+Manually handling data extraction, transformation and loading introduces potential errors and inefficiencies. This ETL pipeline automates these tasks, enabling:
+- 🔄 **Reduced Manual Effort**: API-based dataset retrieval.
+- 🚀 **Scalability**: AWS services handle growing datasets with ease.
+- ⚙️ **Flexibility**: Easily adaptable for new datasets by modifying the script.
+- 💡 **Analytics-Ready Data**: Prepares datasets for analytical queries and BI tools.
 
 ---
 
@@ -18,6 +34,7 @@ The architecture consists of seven key stages:
 6. **SQL Queries:** Amazon Athena to execute analytical queries.
 7. **Data Visualization:** Amazon QuickSight to prepare the data for dashboards.
 
+![Architecture Visual](https://github.com/meenakshi-sethi/data_pipelines/blob/main/spotify_data_pipeline_project/data_pipeline_architecture.png)
 ---
 
 ## 🧩 **AWS Services Used**
@@ -27,7 +44,9 @@ The architecture consists of seven key stages:
 - ⚙️ **AWS Glue Crawler**: Automated metadata extraction for query readiness.
 - 🛠️ **Amazon Athena**: Serverless SQL query execution on S3-based datasets.
 - 📊 **Amazon QuickSight**: Business intelligence tool for dashboard creation.
+- 🔐 **IAM Roles**: Secure access and permission management for AWS resources.
 
+![AWS Services Architecture Visual](https://github.com/meenakshi-sethi/data_pipelines/blob/main/spotify_data_pipeline_project/spotify_project_aws_services_detail.png)
 ---
 
 ## 🔍 **Step-by-Step Breakdown**
@@ -59,6 +78,7 @@ def download_kaggle_dataset(dataset):
 
 download_kaggle_dataset("tonygordonjr/spotify-dataset-2023")
 ```
+📍 **Kaggle Dataset Used:** [Spotify Dataset 2023](https://www.kaggle.com/datasets/tonygordonjr/spotify-dataset-2023)
 
 📖 **Why:** Automated data ingestion eliminates manual downloads, ensuring real-time updates when required.
 
@@ -118,6 +138,45 @@ for file in os.listdir("./data"):
 
 ---
 
+## 🔐 **IAM Role Configuration**
+
+IAM roles are crucial for secure and efficient interaction between AWS services. Here's how I set up IAM roles for this pipeline:
+
+1. **Create IAM User**: Generated an IAM user with programmatic access to interact with S3, Glue, Athena, and QuickSight.
+2. **Attach Policies**: Attached AWS-managed policies like `AmazonS3FullAccess`, `AWSGlueConsoleFullAccess`, and `AmazonAthenaFullAccess`.
+3. **Create IAM Role for Glue**: Created a role with a trust relationship to allow Glue jobs to assume this role.
+4. **Fine-Tune Permissions**: Applied the principle of least privilege, granting access only to `spotify-automation-project-bucket`.
+
+### **IAM Role Policy (Sample)**
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::spotify-automation-project-bucket/*",
+        "arn:aws:s3:::spotify-automation-project-bucket"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "glue:*",
+        "athena:StartQueryExecution",
+        "athena:GetQueryResults"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+---
 ### 🔄 **4️⃣ ETL with AWS Glue**
 
 **Objective:** Transform raw data into queryable datasets.
@@ -172,7 +231,9 @@ glueContext.write_dynamic_frame.from_options(
 
 📖 **Why:** PySpark's distributed processing accelerates large-scale transformations.
 
----
+![Glue ETL Job Visual](https://github.com/meenakshi-sethi/data_pipelines/blob/main/spotify_data_pipeline_project/spotify_project_aws_glue_job.png)
+ 
+ ---
 
 ### 🧠 **5️⃣ Metadata Generation with AWS Glue Crawler**
 
